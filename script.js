@@ -2,39 +2,57 @@ const form = document.getElementById('expense-form');
 const list = document.getElementById('expense-list');
 const totalDiv = document.getElementById('total');
 const chartCanvas = document.getElementById('categoryChart');
+const monthlyChartCanvas = document.getElementById('monthlyChart');
 
 let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
 let categoryChart;
+let monthlyChart;
 
 function updateList() {
   list.innerHTML = '';
   let total = 0;
   const categorySum = {};
+  const monthlySum = {};
 
   expenses
     .slice()
-    .sort((a, b) => new Date(b.date) - new Date(a.date)) // ✅ 根據日期排序（最新在上）
-    .forEach(e => {
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .forEach((e, index) => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${e.date}</td><td>${e.item}</td><td>$${e.amount}</td><td>${e.category}</td>`;
+      tr.innerHTML = `
+        <td>${e.date}</td>
+        <td>${e.item}</td>
+        <td>$${e.amount}</td>
+        <td>${e.category}</td>
+        <td><button onclick="deleteExpense(${index})" style="color:red; font-size:16px;">🗑️</button></td>
+      `;
       list.appendChild(tr);
       total += Number(e.amount);
       categorySum[e.category] = (categorySum[e.category] || 0) + Number(e.amount);
+
+      const month = e.date.slice(0, 7); // 例如 2025-06
+      monthlySum[month] = (monthlySum[month] || 0) + Number(e.amount);
     });
 
   totalDiv.textContent = `總金額：$${total}`;
   localStorage.setItem('expenses', JSON.stringify(expenses));
 
   updateChart(categorySum);
+  updateMonthlyChart(monthlySum);
+}
+
+function deleteExpense(index) {
+  if (confirm("確定要刪除此筆支出？")) {
+    expenses.splice(index, 1);
+    updateList();
+  }
 }
 
 function updateChart(categorySum) {
   const labels = Object.keys(categorySum);
   const data = Object.values(categorySum);
 
-  if (categoryChart) {
-    categoryChart.destroy();
-  }
+  if (categoryChart) categoryChart.destroy();
 
   categoryChart = new Chart(chartCanvas, {
     type: 'pie',
@@ -50,13 +68,40 @@ function updateChart(categorySum) {
     options: {
       responsive: false,
       plugins: {
-        legend: {
-          position: 'bottom'
-        },
-        title: {
-          display: true,
-          text: '各分類支出比例'
-        }
+        legend: { position: 'bottom' },
+        title: { display: true, text: '各分類支出比例' }
+      }
+    }
+  });
+}
+
+function updateMonthlyChart(monthlySum) {
+  const labels = Object.keys(monthlySum).sort();
+  const data = labels.map(month => monthlySum[month]);
+
+  if (monthlyChart) monthlyChart.destroy();
+
+  monthlyChart = new Chart(monthlyChartCanvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '月支出總額',
+        data: data,
+        borderColor: '#42a5f5',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.2
+      }]
+    },
+    options: {
+      responsive: false,
+      plugins: {
+        title: { display: true, text: '每月支出變化圖' },
+        legend: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true }
       }
     }
   });
@@ -92,13 +137,11 @@ function exportCSV() {
   }
 
   const sorted = expenses.sort((a, b) => new Date(b.date) - new Date(a.date));
-
   let csvContent = "日期,項目,金額,分類\n";
   sorted.forEach(e => {
     csvContent += `${e.date},${e.item},${e.amount},${e.category}\n`;
   });
 
-  // ✅ 在開頭加入 BOM（Byte Order Mark）防止 Excel 顯示亂碼
   const bom = "\uFEFF";
   const blob = new Blob([bom + csvContent], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -111,6 +154,4 @@ function exportCSV() {
   document.body.removeChild(link);
 }
 
-
-// 初始化畫面
 updateList();
