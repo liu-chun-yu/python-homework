@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>簡易記帳程式</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>💰 我的記帳程式</h1>
+  <form id="expense-form">
+    <input type="text" id="item" placeholder="項目" required>
+    <input type="number" id="amount" placeholder="金額" required>
+    <select id="category">
+      <option value="餐飲">餐飲</option>
+      <option value="交通">交通</option>
+      <option value="娛樂">娛樂</option>
+      <option value="其他">其他</option>
+    </select>
+    <input type="date" id="date" required>
+    <button type="submit" class="btn add-btn">新增支出</button>
+    <button type="button" id="clear" class="btn clear-btn">清空所有記錄</button>
+    <button onclick="exportCSV()" class="btn export-btn">📤 匯出支出 CSV</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>日期</th>
+        <th>項目</th>
+        <th>金額</th>
+        <th>分類</th>
+      </tr>
+    </thead>
+    <tbody id="expense-list"></tbody>
+  </table>
+
+  <div id="total">總金額：$0</div>
+
+  <canvas id="categoryChart" width="400" height="300"></canvas>
+
+  <div id="stock-box" class="stock-box"></div>
+
+  <script src="script.js"></script>
+
+  <script>
+  fetch('stocks.json')
+    .then(res => res.json())
+    .then(data => {
+      const container = document.getElementById('stock-box');
+      data.forEach(stock => {
+        const time = new Date(stock.updated * 1000).toLocaleString();
+        container.innerHTML += `
+        <div class="stock-item">
+          <strong>📈 ${stock.name} (${stock.symbol})</strong><br>
+          <div class="price">現價：$${stock.price}</div>
+          🔺 高：$${stock.high} &nbsp;&nbsp; 🔻 低：$${stock.low}<br>
+          📊 成交量：${stock.volume.toLocaleString()}<br>
+          🕒 時間：${time}
+        </div>
+      `;
+      });
+    })
+    .catch(err => {
+      document.getElementById('stock-box').innerText = "❌ 無法載入股票資料";
+      console.error("載入錯誤：", err);
+    });
+  </script>
+
+</body>
+</html>

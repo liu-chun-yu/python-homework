@@ -1,0 +1,127 @@
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #c1f4e0;
+  padding: 20px;
+  color: #222;
+}
+h1 {
+  text-align: center;
+  color: #d97c1f;
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-family: 'Noto Sans TC', sans-serif;
+}
+form {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+input, select, button {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: rgb(239, 239, 239);
+  margin-top: 20px;
+}
+th, td {
+  padding: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+#total {
+  margin-top: 15px;
+  font-weight: bold;
+}
+#categoryChart {
+  max-width: 400px;
+  max-height: 400px;
+  width: 100% !important;
+  height: auto !important;
+  margin: 30px auto;
+  display: block;
+}
+button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;       
+  background-color: #4CAF50; 
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.add-btn {
+  background-color: #4CAF50;
+}
+.add-btn:hover {
+  background-color: #388E3C;
+}
+
+.clear-btn {
+  background-color: #F44336;
+}
+.clear-btn:hover {
+  background-color: #D32F2F;
+}
+#stock-box {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.stock-item {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+  font-weight: 500;
+  color: #333;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.stock-item strong {
+  font-size: 16px;
+  color: #1565c0;
+}
+
+.stock-item .price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #2e7d32;
+}
+.export-btn {
+  background-color: #5c6bc0;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.export-btn:hover {
+  background-color: #3949ab;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  line-height: 1.2;
+  white-space: nowrap;
+  min-height: 48px; /* ✅ 強制統一高度 */
+  box-sizing: border-box;
+  gap: 8px;
+}
